@@ -1,0 +1,44 @@
+name: Update
+
+on:
+  schedule:
+    - cron: '0 * * * *' # runs every hour on the hour
+
+jobs:
+  check-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install dependencies and build
+        run: |
+          yarn
+          yarn build
+
+      - name: Update Mappings
+        id: mappings
+        run: |
+          node ./dist/src/index.js
+
+      - name: Commit Changes
+        id: commit
+        continue-on-error: true
+        run: |
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "Update to version $(cat versionname)"
+
+      - name: Push Changes
+        if: ${{ steps.commit.conclusion == 'success' }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          branch: "master"
