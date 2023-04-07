@@ -26,8 +26,6 @@ export default (usmap: Buffer, fileName: string) => {
 
   const uncompressed = decompress(reader);
 
-  fs.writeFileSync('uncompressed.bin', uncompressed.buffer);
-
   const nameMapLength = uncompressed.readInt32();
   const nameMap: string[] = [];
 
