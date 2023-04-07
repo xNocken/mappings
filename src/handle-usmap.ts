@@ -94,11 +94,14 @@ export default (usmap: Buffer, fileName: string) => {
 
   fs.mkdirSync(`output/${fileName}`, { recursive: true });
 
+  const sortedStructs = Object.fromEntries(Object.keys(structs).sort().map((key) => [key, structs[key]]));
+  const sortedEnums = Object.fromEntries(Object.keys(enums).sort().map((key) => [key, enums[key]]));
+
   // per version output
-  fs.writeFileSync(`output/${fileName}/enums.json`, JSON.stringify(enums, null, 2));
-  fs.writeFileSync(`output/${fileName}/structs.json`, JSON.stringify(structs, null, 2));
+  fs.writeFileSync(`output/${fileName}/enums.json`, JSON.stringify(sortedEnums, null, 2));
+  fs.writeFileSync(`output/${fileName}/structs.json`, JSON.stringify(sortedStructs, null, 2));
 
   // overwriting output
-  fs.writeFileSync('output/enums.json', JSON.stringify(enums, null, 2));
-  fs.writeFileSync('output/structs.json', JSON.stringify(structs, null, 2));
+  fs.writeFileSync('output/enums.json', JSON.stringify(sortedEnums, null, 2));
+  fs.writeFileSync('output/structs.json', JSON.stringify(sortedStructs, null, 2));
 };

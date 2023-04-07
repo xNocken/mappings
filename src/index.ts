@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync } from 'fs';
+import { existsSync, writeFileSync } from 'fs';
 
 import needle from 'needle';
 
@@ -6,7 +6,7 @@ import handleUsmap from './handle-usmap';
 
 import type { CompressionMethod, Mappings } from './types/api';
 
-const mappingsUrl = 'https://fortnitecentral.genxgames.gg/api/v1/mappings';
+const mappingsUrl = process.argv[2] || 'https://fortnitecentral.genxgames.gg/api/v1/mappings';
 
 const supportedCompressionMethods: CompressionMethod[] = ['None', 'Oodle'];
 
@@ -34,7 +34,9 @@ const main = async () => {
   const theMapping = filteredMappings[0];
 
   if (!theMapping) {
-    throw new Error('No supported mappings found');
+    console.log('No supported mappings found');
+
+    return;
   }
 
   console.log('Using mapping:', theMapping.fileName, theMapping.hash);
@@ -49,7 +51,7 @@ const main = async () => {
     name = `${version}-${build}`;
   }
 
-  appendFileSync('versionname', name);
+  writeFileSync('versionname', name);
 
   if (existsSync(`./output/${name}`)) {
     console.log('Already have this version, skipping');
@@ -72,4 +74,3 @@ main().then(() => {
 }).catch((error) => {
   throw error;
 });
-//
