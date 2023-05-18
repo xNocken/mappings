@@ -9,6 +9,7 @@ import type { CompressionMethod, Mappings } from './types/api';
 const mappingsUrl = process.argv[2] || 'https://fortnitecentral.genxgames.gg/api/v1/mappings';
 
 const supportedCompressionMethods: CompressionMethod[] = ['None', 'Oodle'];
+const supportedPlatforms: string[] = ['Android'];
 
 const main = async () => {
   console.log('Fetching mappings...');
@@ -28,8 +29,14 @@ const main = async () => {
       return false;
     }
 
+    if (!supportedPlatforms.includes(mapping.meta.platform)) {
+      return false;
+    }
+
     return true;
   });
+
+  console.log('Found', filteredMappings.length, 'supported mappings');
 
   const theMapping = filteredMappings[0];
 
