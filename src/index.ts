@@ -48,7 +48,7 @@ const main = async () => {
 
   console.log('Using mapping:', theMapping.fileName, theMapping.hash);
 
-  const matched = theMapping.fileName.match(/\+\+Fortnite\+Release-(?<version>\d+\.\d+)-CL-(?<build>\d+)-\w+_\w+\.usmap/);
+  const matched = theMapping.fileName.match(/\+\+Fortnite\+Release-(?<version>\d+\.\d+)-CL-(?<build>\d+)(-\w+)?_\w+\.usmap/);
 
   let name = theMapping.fileName;
 
@@ -56,6 +56,8 @@ const main = async () => {
     const { version, build } = matched.groups;
 
     name = `${version}-${build}`;
+  } else {
+    throw new Error('Failed to parse version name');
   }
 
   writeFileSync('versionname', name);

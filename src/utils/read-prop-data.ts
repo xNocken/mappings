@@ -29,6 +29,7 @@ const EUsmapPropertyType = [
   'SetProperty',
   'EnumProperty',
   'FieldPathProperty',
+  'OptionalProperty',
 ];
 
 const readPropData = (reader: Reader, readName: () => string): string => {
@@ -47,6 +48,7 @@ const readPropData = (reader: Reader, readName: () => string): string => {
       return readName();
 
     case 'SetProperty':
+    case 'OptionalProperty':
     case 'ArrayProperty':
       return `${propType}<${readPropData(reader, readName)}>`;
 
