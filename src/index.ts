@@ -8,7 +8,7 @@ import type { CompressionMethod, Mappings } from './types/api';
 
 const mappingsUrl = process.argv[2] || 'https://fortnitecentral.genxgames.gg/api/v1/mappings';
 
-const supportedCompressionMethods: CompressionMethod[] = ['None', 'Oodle'];
+const supportedCompressionMethods: CompressionMethod[] = ['None', 'Oodle', 'Brotli'];
 const supportedPlatforms: string[] = ['Windows'];
 
 const main = async () => {

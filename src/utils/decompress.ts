@@ -1,3 +1,4 @@
+import brotli from 'brotli';
 import ffi from 'ffi-napi';
 
 import Reader from '../classes/Reader';
@@ -18,7 +19,7 @@ export default (reader: Reader): Reader => {
 
   switch (compMethod) {
     case CompressionMethod.None:
-      reader.addOffsetByte(0, compSize);
+      reader.addOffsetByte(0, Math.min(compSize, reader.getBitsLeft() / 8));
 
       return reader;
 
@@ -50,9 +51,12 @@ export default (reader: Reader): Reader => {
       return new Reader(uncompData);
     }
 
-    case CompressionMethod.Brotli:
-      throw Error('Brotli compression is not supported');
+    case CompressionMethod.Brotli: {
+      const data = reader.readBytes(compSize);
+      const decompressed = brotli.decompress(Buffer.from(data), uncompSize);
 
+      return new Reader(decompressed);
+    }
     default:
       throw Error('Invalid compression method');
   }
