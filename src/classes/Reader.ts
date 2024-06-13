@@ -310,8 +310,8 @@ export default class Reader {
     return BigInt(lo) + (BigInt(hi) << 32n);
   }
 
-  readString(): string {
-    const length = this.readByte();
+  readString(useShort = false): string {
+    const length = useShort ? this.readUInt16() : this.readByte();
     let result = '';
 
     if (length === 0) {

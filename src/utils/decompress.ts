@@ -1,5 +1,6 @@
 import brotli from 'brotli';
 import ffi from 'ffi-napi';
+import zstd from 'fzstd';
 
 import Reader from '../classes/Reader';
 import { CompressionMethod } from '../types/umap';
@@ -57,6 +58,14 @@ export default (reader: Reader): Reader => {
 
       return new Reader(decompressed);
     }
+
+    case CompressionMethod.Zstd: {
+      const data = reader.readBytes(compSize);
+      const decompressed = zstd.decompress(data);
+
+      return new Reader(decompressed);
+    }
+
     default:
       throw Error('Invalid compression method');
   }

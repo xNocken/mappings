@@ -1,13 +1,13 @@
 import fs from 'fs';
 
 import Reader from './classes/Reader';
+import { EUsmapVersion } from './types/umap';
 import decompress from './utils/decompress';
 import readPropData from './utils/read-prop-data';
 
 import type { Struct } from './types/result';
 
 const magic = 0x30C4;
-const maxVersion = 0;
 
 export default (usmap: Buffer, fileName: string) => {
   const reader = new Reader(usmap);
@@ -20,8 +20,20 @@ export default (usmap: Buffer, fileName: string) => {
 
   const version = reader.readByte();
 
-  if (version > maxVersion) {
+  if (version > EUsmapVersion.Latest) {
     throw Error('Invalid version');
+  }
+
+  const hasVersioning = version >= EUsmapVersion.PackageVersioning && reader.readBoolean();
+
+  if (hasVersioning) {
+    reader.skipBytes(4); // FileVersionUE4
+    reader.skipBytes(4); // FileVersionUE5
+
+    const customVersionCount = reader.readInt32();
+
+    reader.skipBytes(customVersionCount * 20);
+    reader.skipBytes(4); // NetCL
   }
 
   const uncompressed = decompress(reader);
@@ -30,7 +42,7 @@ export default (usmap: Buffer, fileName: string) => {
   const nameMap: string[] = [];
 
   for (let i = 0; i < nameMapLength; i += 1) {
-    nameMap.push(uncompressed.readString());
+    nameMap.push(uncompressed.readString(version >= EUsmapVersion.LongFName));
   }
 
   const enumCount = uncompressed.readInt32();
@@ -52,7 +64,7 @@ export default (usmap: Buffer, fileName: string) => {
 
   for (let i = 0; i < enumCount; i += 1) {
     const enumName = readName();
-    const enumValueCount = uncompressed.readByte();
+    const enumValueCount = version >= EUsmapVersion.LargeEnums ? uncompressed.readInt16() : uncompressed.readByte();
 
     const values: string[] = [];
 

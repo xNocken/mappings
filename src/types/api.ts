@@ -1,4 +1,4 @@
-export type CompressionMethod = 'None' | 'Oodle' | 'Brotli';
+export type CompressionMethod = 'None' | 'Oodle' | 'Brotli' | 'Zstandard';
 
 export interface Mappings {
   url: string;
