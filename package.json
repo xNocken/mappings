@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "runn": "yarn build && node dist/src/index.js"
+    "runn": "yarn build && node dist/src/index.js",
+    "manual": "yarn build && node dist/src/scripts/manual.js"
   }
 }
