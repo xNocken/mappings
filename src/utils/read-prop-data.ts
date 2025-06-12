@@ -30,10 +30,13 @@ const EUsmapPropertyType = [
   'EnumProperty',
   'FieldPathProperty',
   'OptionalProperty',
+  'Utf8StrProperty',
+  'AnsiStrProperty',
 ];
 
 const readPropData = (reader: Reader, readName: () => string): string => {
-  const propType = EUsmapPropertyType[reader.readByte()];
+  const type = reader.readByte();
+  const propType = type === 255 ? 'Unknown' : EUsmapPropertyType[type] ?? 'Unsupported';
 
   switch (propType) {
     case 'EnumProperty': {
